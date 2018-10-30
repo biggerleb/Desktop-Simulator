@@ -1,0 +1,40 @@
+#container {
+	display: grid;
+	height: 100%;
+	grid-template-columns: repeat(auto-fill, 100px);
+	grid-template-rows: repeat(auto-fill, 100px);
+	justify-content: center;
+	align-content: center;
+}
+
+.item {
+	border: 1px solid #5e1f7c;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	flex-direction: column;
+}
+
+.picture {
+	height: 65px;
+	width: 80px;
+	border: 1px solid red;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.file-name {
+	padding-top: 3px;
+}
+
+div {
+	box-sizing: border-box;
+}
+
+html, body {
+	height: 100%;
+	padding: 0;
+	margin: 0;
+	background-color: #cbede8;
+}
