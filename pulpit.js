@@ -1,5 +1,9 @@
 $(document).ready(function(){
-	$(window).resize(updatingGrid);
+	var resizeTimer;
+	$(window).resize(function(){
+		clearTimeout(resizeTimer);
+		resizeTimer = setTimeout(updatingGrid, 50);
+	});
 
 	fillingGrid();
 });

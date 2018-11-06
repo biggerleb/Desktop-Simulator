@@ -1,10 +1,33 @@
 #container {
+	position: relative;
 	display: grid;
 	height: 100%;
 	grid-template-columns: repeat(auto-fill, 100px);
 	grid-template-rows: repeat(auto-fill, 100px);
 	justify-content: center;
 	align-content: center;
+}
+
+#menu {
+	position:absolute;
+	display: flex;
+	width: 140px;
+	height: 40px;
+	right: 30px;
+}
+
+#add-file {
+	width: 70px;
+	display:flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#add-folder {
+	width: 70px;
+	display:flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .item {
@@ -22,6 +45,7 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	font-size: 62px;
 }
 
 .file-name {
@@ -30,6 +54,10 @@
 	height: 33px;
 	text-align: center;
 	line-height: 100%;
+}
+
+.desktop-icon {
+
 }
 
 div {
