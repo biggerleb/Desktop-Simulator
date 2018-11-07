@@ -13,7 +13,48 @@
 	display: flex;
 	width: 140px;
 	height: 40px;
-	right: 30px;
+	right: 40px;
+	top: -40px;
+	background-color: #A5668B;
+	color: #0E103D;
+	border-bottom-left-radius: 20px;
+	transition: all 0.5s;
+}
+
+#menu div#add-file {
+	transition: background 0.3s;
+	border-bottom-left-radius: 20px;
+}
+
+#menu div#add-file:hover {
+	background-color: #965D7F;
+}
+
+#menu div#add-folder {
+	transition: background 0.3s;
+}
+
+#menu div#add-folder:hover {
+	background-color: #965D7F;
+}
+
+#arrow-container {
+	position: absolute;
+	display: flex;
+	right: 0px;
+	width: 40px;
+	height: 40px;
+	font-size: 25px;
+	justify-content: center;
+	align-items: center;
+	background-color: #0E103D;
+	color: #F7E9F5;
+	border-radius: 50%;
+	transition: all 0.5s;
+}
+
+#arrow-container i {
+	transition: all 0.7s;
 }
 
 #add-file {
@@ -56,8 +97,20 @@
 	line-height: 100%;
 }
 
-.desktop-icon {
+.Ftext {
+	margin:0;
+	display: inline-block;
+}
 
+.arrow-container {
+	position: absolute;
+	display: flex;
+	right: 0px;
+	width: ;
+}
+
+span {
+	width: 4px;
 }
 
 div {
