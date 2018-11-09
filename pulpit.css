@@ -48,7 +48,7 @@
 	justify-content: center;
 	align-items: center;
 	background-color: #0E103D;
-	color: #F7E9F5;
+	color: #EFE6E8;
 	border-radius: 50%;
 	transition: all 0.5s;
 }
@@ -72,7 +72,7 @@
 }
 
 .item {
-	border: 1px solid #5e1f7c;
+	/*border: 1px solid #5e1f7c;*/
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
@@ -82,11 +82,12 @@
 .picture {
 	height: 65px;
 	width: 80px;
-	border: 1px solid red;
+	/*border: 1px solid red;*/
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	font-size: 62px;
+	margin-bottom: 6px;
 }
 
 .file-name {
@@ -102,11 +103,44 @@
 	display: inline-block;
 }
 
-.arrow-container {
+.form {
 	position: absolute;
-	display: flex;
+	top: 80px;
 	right: 0px;
-	width: ;
+	width: 300px;
+	height: 200px;
+	background-color: #0E103D;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	color: white;
+	border-bottom-left-radius: 20px;
+	border-top-left-radius: 20px;
+}
+
+.form form {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-around;
+}
+
+.select-color {
+	display: flex;
+	align-items: center;
+}
+
+.create-name {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	font-size: 11px;
+}
+
+.create-name p {
+	margin: 0;
 }
 
 span {
@@ -117,9 +151,15 @@ div {
 	box-sizing: border-box;
 }
 
+body {
+	font-family: "Trebuchet MS";
+	font-size: 14px;
+	color: #080922;
+	background-color: #EFE6E8;
+}
+
 html, body {
 	height: 100%;
 	padding: 0;
 	margin: 0;
-	background-color: #cbede8;
 }
