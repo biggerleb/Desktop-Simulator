@@ -113,23 +113,19 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	justify-content: space-around;
 	color: white;
 	border-bottom-left-radius: 20px;
 	border-top-left-radius: 20px;
-}
-
-.form form {
-	width: 100%;
-	height: 100%;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: space-around;
+	transition: all 0.5s;
 }
 
 .select-color {
 	display: flex;
 	align-items: center;
+	justify-content: space-between;
+	width:180px;
+	margin-left: 10px;
 }
 
 .create-name {
@@ -141,6 +137,71 @@
 
 .create-name p {
 	margin: 0;
+}
+
+.radio-div {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-right: ;
+}
+
+.color-div {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 30px;
+	width: 30px;
+	background-color: #EFE6E8;
+	border-radius: 4px;
+}
+
+.color-span {
+	width: 24px;
+	height: 24px;
+	border-radius: 4px;
+}
+
+span.color1 {
+	background-color: #333676;
+}
+
+span.color2 {
+	background-color: #C56E00;
+}
+
+span.color3 {
+	background-color: #979F00;
+}
+
+.create-button {
+	border-radius: 4px;
+	outline: none;
+	border-width: 0;
+	font-family: inherit;
+	padding: 2px 7px;
+	color: #080922;
+	transition: all 0.7s;
+	font-weight: 500;
+}
+
+.create-button:hover {
+	background-color: #0E103D;
+	color: white;
+	cursor: pointer;
+}
+
+.exit-form {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	font-size: 24px;
+	color: white;
+	transition: all 0.7s;
+}
+
+.exit-form:hover {
+	cursor: pointer;
 }
 
 span {
@@ -163,3 +224,6 @@ html, body {
 	padding: 0;
 	margin: 0;
 }
+
+
+

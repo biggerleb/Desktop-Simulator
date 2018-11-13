@@ -24,7 +24,9 @@ $(document).ready(function(){
 		}
 	});
 
-
+	$("div#add-file").on("click", function(){
+		
+	})
 });
 
 function updatingGrid(){

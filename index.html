@@ -26,21 +26,27 @@
 		</div>
 
 		<div class="form" id="file-form">
-			<form id="file-form">
 				<div class="create-name">
 					<p>FILE NAME</p>
 					<input type="text" name="file-name">
 				</div>
 				<div class="select-color">
-
-					<input type="radio" name="file-color" value="#080922">
-
-					<input type="radio" name="file-color" value="">
-
-					<input type="radio" name="file-color" value="">
-					
+					<div class="radio-div">
+						<div class="color-div"><span class="color-span color1"></span></div>
+						<input type="radio" name="file-color" value="">
+					</div>
+					<div class="radio-div">
+						<div class="color-div"><span class="color-span color2"></span></div>		
+						<input type="radio" name="file-color" value="">
+					</div>
+					<div class="radio-div">
+						<div class="color-div"><span class="color-span color3"></span></div>
+						<input type="radio" name="file-color" value="">
+					</div>
 				</div>
-			</form>
+				<button class="create-button" id="create-file-button">CREATE FILE</button>
+
+				<i class="fas fa-times-circle exit-form" id="exit-file"></i>
 		</div>
 
 		<div class="item full">
