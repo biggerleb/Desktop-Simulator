@@ -24,8 +24,30 @@ $(document).ready(function(){
 		}
 	});
 
-	$("div#add-file").on("click", function(){
-		
+	$("#add-file").on("click", function(){
+		if( $("#folder-form").css("right")==="-300px" ) {
+			$("#file-form").css("right", "0");
+		} else {
+			$("#folder-form").css("right", "-300px");
+			$("#file-form").css("right", "0");
+		}
+	});
+
+	$("#file-form i").on("click", function(){
+		$("#file-form").css("right", "-300px");
+	});
+
+	$("#add-folder").on("click", function(){
+		if( $("#file-form").css("right")==="-300px" ) {
+			$("#folder-form").css("right", "0");
+		} else {
+			$("#file-form").css("right", "-300px");
+			$("#folder-form").css("right", "0");
+		}
+	});
+
+	$("#folder-form i").on("click", function(){
+		$("#folder-form").css("right", "-300px");
 	})
 });
 
