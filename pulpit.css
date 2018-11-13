@@ -181,13 +181,13 @@ span.color3 {
 	font-family: inherit;
 	padding: 2px 7px;
 	color: #080922;
-	transition: all 0.7s;
-	font-weight: 500;
+	background-color: #f9f9f9;
+	transition: all 0.5s;
+	border: 1px solid #EFE6E8;
 }
 
 .create-button:hover {
-	background-color: #0E103D;
-	color: white;
+	background-color: #EFE6E8;
 	cursor: pointer;
 }
 
@@ -197,11 +197,12 @@ span.color3 {
 	top: 10px;
 	font-size: 24px;
 	color: white;
-	transition: all 0.7s;
+	transition: all 0.5s;
 }
 
 .exit-form:hover {
 	cursor: pointer;
+	color: #EFE6E8;
 }
 
 span {
