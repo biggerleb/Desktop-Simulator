@@ -175,6 +175,18 @@ span.color3 {
 	background-color: #979F00;
 }
 
+.icon-blue {
+	color: #333676;
+}
+
+.icon-orange {
+	color: #C56E00;
+}
+
+.icon-green {
+	color: #979F00;
+}
+
 .create-button {
 	border-radius: 4px;
 	outline: none;

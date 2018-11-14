@@ -29,7 +29,9 @@ $(document).ready(function(){
 			$("#file-form").css("right", "0");
 		} else {
 			$("#folder-form").css("right", "-300px");
-			$("#file-form").css("right", "0");
+			var timer = setTimeout(function() {
+				$("#file-form").css("right", "0");
+			}, 500);
 		}
 	});
 
@@ -42,7 +44,9 @@ $(document).ready(function(){
 			$("#folder-form").css("right", "0");
 		} else {
 			$("#file-form").css("right", "-300px");
-			$("#folder-form").css("right", "0");
+			var timer = setTimeout(function(){
+				$("#folder-form").css("right", "0");
+			}, 500);
 		}
 	});
 
@@ -50,6 +54,8 @@ $(document).ready(function(){
 		$("#folder-form").css("right", "-300px");
 	})
 });
+
+
 
 function updatingGrid(){
 	var windowHeight = window.innerHeight;
@@ -77,6 +83,7 @@ function updatingGrid(){
 	}
 }
 
+var itemID = 1;
 function fillingGrid(){
 	var windowHeight = window.innerHeight;
 	var windowWidth = window.innerWidth;
@@ -84,9 +91,10 @@ function fillingGrid(){
 	var yItemsNum = Math.floor(windowHeight / 100);
 	var itemsCapacity = xItemsNum * yItemsNum;
 	var itemsAlreadyCreated = getNumberOfItems();
-	var itemElement = '<div class="item"><div class="picture"></div><div class="file-name"></div></div>';
 	for(var i = 0; i< (itemsCapacity - itemsAlreadyCreated); i++) {
+		var itemElement = '<div class="item" id="x'+ itemID +'"><div class="picture"></div><div class="file-name"></div></div>';
 		$("#container").append(itemElement);
+		itemID++;
 	}
 }
 
