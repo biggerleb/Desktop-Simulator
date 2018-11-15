@@ -52,7 +52,9 @@ $(document).ready(function(){
 
 	$("#folder-form i").on("click", function(){
 		$("#folder-form").css("right", "-300px");
-	})
+	});
+
+	
 });
 
 
@@ -92,7 +94,7 @@ function fillingGrid(){
 	var itemsCapacity = xItemsNum * yItemsNum;
 	var itemsAlreadyCreated = getNumberOfItems();
 	for(var i = 0; i< (itemsCapacity - itemsAlreadyCreated); i++) {
-		var itemElement = '<div class="item" id="x'+ itemID +'"><div class="picture"></div><div class="file-name"></div></div>';
+		var itemElement = '<div class="item empty" id="x'+ itemID +'"><div class="picture"></div><div class="file-name"></div></div>';
 		$("#container").append(itemElement);
 		itemID++;
 	}
@@ -103,3 +105,24 @@ function getNumberOfItems(){
 	return items.length;
 }
 
+class FullItem {
+	constructor(type, color, name) {
+		this.type = type;
+		this.color = color;
+		this.name = name;
+		this.identification = firstFreeID();
+	}
+	itemCreation() {
+		var item = $(".item#" + this.identification);
+		var pictureInsert = '<i class="fas fa-'+ this.type +' icon-'+ this.color +'"></i>';
+		var textInsert = '<p class="Ftext">'+ this.name +'</p>';
+		item[0].children[0].innerHTML = pictureInsert;
+		item[0].children[1].innerHTML = textInsert;
+		item.removeClass("empty");
+		item.addClass("full");
+	}
+}
+
+function firstFreeID() {
+	return $(".item.empty").first().attr("id");
+}
