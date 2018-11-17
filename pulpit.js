@@ -54,7 +54,27 @@ $(document).ready(function(){
 		$("#folder-form").css("right", "-300px");
 	});
 
-	
+	$("#create-file-button").on("click", function(){
+		// this.id
+		// $('input[type="radio"]:checked').val() ); undefined
+		var errorCount = 0;
+		if($('input[name="file-name"]').val().length === 0) {
+			$('#file-form .create-name p').css("color", "#ff7c63");
+			errorCount++;
+		} else {
+			$('#file-form .create-name p').css("color", "white");
+		}
+		if($('input[name="file-color"]:checked').val() === undefined) {
+			$('#file-form .color-div').addClass('color-error');
+			errorCount++;
+		} else {
+			$('#file-form .color-div').removeClass('color-error');
+		}
+		if(errorCount > 0) {
+			return;
+		}
+		console.log("going forward"); // tu skonczylem
+	})
 });
 
 
@@ -122,6 +142,7 @@ class FullItem {
 		item.addClass("full");
 	}
 }
+FullItem.allInstances = new Map;
 
 function firstFreeID() {
 	return $(".item.empty").first().attr("id");
