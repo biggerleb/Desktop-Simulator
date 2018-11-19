@@ -136,6 +136,13 @@
 	font-size: 11px;
 }
 
+.word-error {
+	position: absolute;
+	font-size: 11px;
+	top: 57px;
+	display: none;
+}
+
 input[type="text"] {
 	text-align: center;
 }

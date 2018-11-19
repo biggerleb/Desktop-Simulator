@@ -29,6 +29,7 @@ $(document).ready(function(){
 			$("#file-form").css("right", "0");
 		} else {
 			$("#folder-form").css("right", "-300px");
+			clearingForms();
 			var timer = setTimeout(function() {
 				$("#file-form").css("right", "0");
 			}, 500);
@@ -37,6 +38,7 @@ $(document).ready(function(){
 
 	$("#file-form i").on("click", function(){
 		$("#file-form").css("right", "-300px");
+		clearingForms();
 	});
 
 	$("#add-folder").on("click", function(){
@@ -44,6 +46,7 @@ $(document).ready(function(){
 			$("#folder-form").css("right", "0");
 		} else {
 			$("#file-form").css("right", "-300px");
+			clearingForms();
 			var timer = setTimeout(function(){
 				$("#folder-form").css("right", "0");
 			}, 500);
@@ -52,29 +55,16 @@ $(document).ready(function(){
 
 	$("#folder-form i").on("click", function(){
 		$("#folder-form").css("right", "-300px");
+		clearingForms();
 	});
 
 	$("#create-file-button").on("click", function(){
-		// this.id
-		// $('input[type="radio"]:checked').val() ); undefined
-		var errorCount = 0;
-		if($('input[name="file-name"]').val().length === 0) {
-			$('#file-form .create-name p').css("color", "#ff7c63");
-			errorCount++;
-		} else {
-			$('#file-form .create-name p').css("color", "white");
-		}
-		if($('input[name="file-color"]:checked').val() === undefined) {
-			$('#file-form .color-div').addClass('color-error');
-			errorCount++;
-		} else {
-			$('#file-form .color-div').removeClass('color-error');
-		}
-		if(errorCount > 0) {
-			return;
-		}
-		console.log("going forward"); // tu skonczylem
-	})
+		formItemCreation('file');
+	});
+
+	$("#create-folder-button").on("click", function(){
+		formItemCreation('folder');
+	});
 });
 
 
@@ -146,4 +136,58 @@ FullItem.allInstances = new Map;
 
 function firstFreeID() {
 	return $(".item.empty").first().attr("id");
+}
+
+function clearingForms() {
+	var timer = setTimeout(function(){
+		$('input[type="text"]').val("");
+		$('input[type="radio"]').prop("checked", false);
+		$('.create-name p').css("color", "white");
+		$('.color-div').removeClass('color-error');
+		$('.word-error').css('display', 'none');
+	},500);
+}
+
+function formItemCreation(type) {
+	var errorCount = 0;
+	if($('input[name="'+ type +'-name"]').val().length === 0) {
+		$('#'+ type +'-form .create-name p').css("color", "#ff7c63");
+		errorCount++;
+	} else {
+		$('#'+ type +'-form .create-name p').css("color", "white");
+	}
+	if($('input[name="'+ type +'-color"]:checked').val() === undefined) {
+		$('#'+ type +'-form .color-div').addClass('color-error');
+		errorCount++;
+	} else {
+		$('#'+ type +'-form .color-div').removeClass('color-error');
+	}
+	if(isWordError(type)) {
+		$('#'+ type +'-form .word-error').css('display', 'block');
+		$('#'+ type +'-form .create-name p').css("color", "#ff7c63");
+		errorCount++;
+	} else {
+		$('#'+ type +'-form .word-error').css('display', 'none');
+	}
+	if(errorCount > 0) {
+		return;
+	}
+	var name = $('input[name="'+ type +'-name"]').val();
+	var color = $('input[name="'+ type +'-color"]:checked').val();
+	var newItem = new FullItem(type, color, name);
+	FullItem.allInstances.set(newItem.identification, newItem);
+	newItem.itemCreation();
+	$("#"+ type +"-form").css("right", "-300px");
+	clearingForms();
+}
+
+function isWordError(type) {
+	var itemName = $('input[name="'+ type +'-name"]').val();
+	var itemNameArray = itemName.split(" ");
+	for(var i = 0; i < itemNameArray.length; i++){
+		if(itemNameArray[i].length > 14){
+			return true;
+		}
+	}
+	return false;
 }
