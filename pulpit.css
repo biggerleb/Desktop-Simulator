@@ -221,7 +221,6 @@ span.color3 {
 .create-button:hover {
 	background-color: #965D7F;
 	color: white;
-	cursor: pointer;
 }
 
 .exit-form {
@@ -231,10 +230,6 @@ span.color3 {
 	font-size: 24px;
 	color: white;
 	transition: all 0.5s;
-}
-
-.exit-form:hover {
-	cursor: pointer;
 }
 
 span {

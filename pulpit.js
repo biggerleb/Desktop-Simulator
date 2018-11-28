@@ -65,6 +65,18 @@ $(document).ready(function(){
 	$("#create-folder-button").on("click", function(){
 		formItemCreation('folder');
 	});
+
+	$("div#container").on("mousedown","div.full div.picture" ,function(downE){
+		downE.preventDefault();
+		$("body").css("cursor", "grab");
+
+
+
+		$("body").on("mouseup", function(upE){
+			$("body").css("cursor", "default");
+			console.log(upE);
+		});
+	});
 });
 
 
