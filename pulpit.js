@@ -66,15 +66,30 @@ $(document).ready(function(){
 		formItemCreation('folder');
 	});
 
-	$("div#container").on("mousedown","div.full div.picture" ,function(downE){
+	$("div.container").on("mousedown","div.full div.picture" ,function(downE){
 		downE.preventDefault();
 		$("body").css("cursor", "grab");
-
+		var pathD = downE.originalEvent.path;
+		var starterID;
+		if(pathD[1].id) {
+			starterID = pathD[1].id;
+		} else if(pathD[2].id){
+			starterID = pathD[2].id;
+		}
+		console.log(starterID);
 
 
 		$("body").on("mouseup", function(upE){
+			$("body").off();
 			$("body").css("cursor", "default");
-			console.log(upE);
+			var pathU = upE.originalEvent.path;
+			var enderID;
+			if(pathU[0].id) {
+				enderID = pathU[0].id;
+			} else if(pathU[1].id){
+				enderID = pathU[1].id;
+			}
+			console.log(enderID);
 		});
 	});
 });
@@ -117,7 +132,7 @@ function fillingGrid(){
 	var itemsAlreadyCreated = getNumberOfItems();
 	for(var i = 0; i< (itemsCapacity - itemsAlreadyCreated); i++) {
 		var itemElement = '<div class="item empty" id="x'+ itemID +'"><div class="picture"></div><div class="file-name"></div></div>';
-		$("#container").append(itemElement);
+		$(".container").append(itemElement);
 		itemID++;
 	}
 }
