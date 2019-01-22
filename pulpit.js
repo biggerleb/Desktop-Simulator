@@ -48,8 +48,6 @@ $(document).ready(function(){
 		} else if(pathD[2].id){
 			starterID = pathD[2].id;
 		}
-		// console.log(starterID);
-
 
 		$("body").on("mouseup", function(upE){
 			$("body").off();
@@ -65,12 +63,13 @@ $(document).ready(function(){
 			}
 			console.log(enderID);
 			if(enderID === undefined || FullItem.allInstances.has(enderID) || enderID.split("")[0] !== "x"){
+				cursorToNotAllowed();
 				return null;
 			}
 			var mapItem = FullItem.allInstances.get(starterID);
 			mapItem.itemDeletion();
 			mapItem.identification = enderID;
-			mapItem.itemCreation(enderID);
+			mapItem.itemCreation();
 		  FullItem.allInstances.delete(starterID);
 			FullItem.allInstances.set(enderID, mapItem);	
 		});
@@ -85,8 +84,8 @@ class FullItem {
 		this.name = name;
 		this.identification = firstFreeID();
 	}
-	itemCreation(id) {
-		var item = $(".item#" + id);
+	itemCreation() {
+		var item = $(".item#" + this.identification);
 		var pictureInsert = '<i class="fas fa-'+ this.type +' icon-'+ this.color +'"></i>';
 		var textInsert = '<p class="Ftext">'+ this.name +'</p>';
 		item[0].children[0].innerHTML = pictureInsert;
@@ -194,7 +193,7 @@ function formItemCreation(type) {
 	var color = $('input[name="'+ type +'-color"]:checked').val();
 	var newItem = new FullItem(type, color, name);
 	FullItem.allInstances.set(newItem.identification, newItem);
-	newItem.itemCreation(newItem.identification);
+	newItem.itemCreation();
 	$("#"+ type +"-form").css("right", "-300px");
 	clearingForms();
 }
@@ -251,4 +250,11 @@ function showingAddFolder() {
 				$("#file-form").css("right", "-300px");
 			}, 500);
 		}
+}
+
+function cursorToNotAllowed () {
+	$("body").css("cursor", "not-allowed");
+	setTimeout(function(){
+		$("body").css("cursor", "default");
+	}, 500);
 }
