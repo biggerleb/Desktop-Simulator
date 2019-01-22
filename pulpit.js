@@ -9,31 +9,11 @@ $(document).ready(function(){
 
 	var rotVar = 180;
 	$("#arrow-container").on("click", function(){
-		if(!($(this).hasClass("hide"))){
-			$("#menu").css("top", "0");
-			$(this).css("border-radius", "0");
-			$(this).addClass("hide");
-			$("#arrow-container i").css("transform", "rotate("+ rotVar +"deg)");
-			rotVar += 180;
-		} else {
-			$("#menu").css("top", "-40px");
-			$(this).css("border-radius", "50%");
-			$(this).removeClass("hide");
-			$("#arrow-container i").css("transform", "rotate("+ rotVar +"deg)");
-			rotVar += 180;
-		}
+		rotVar = togglingArrowContainer(rotVar, this); //a littile hack with keeping track of rotVar
 	});
 
 	$("#add-file").on("click", function(){
-		if( $("#folder-form").css("right")==="-300px" ) {
-			$("#file-form").css("right", "0");
-		} else {
-			$("#folder-form").css("right", "-300px");
-			clearingForms();
-			var timer = setTimeout(function() {
-				$("#file-form").css("right", "0");
-			}, 500);
-		}
+		showingAddFile();
 	});
 
 	$("#file-form i").on("click", function(){
@@ -42,15 +22,7 @@ $(document).ready(function(){
 	});
 
 	$("#add-folder").on("click", function(){
-		if( $("#file-form").css("right")==="-300px" ) {
-			$("#folder-form").css("right", "0");
-		} else {
-			$("#file-form").css("right", "-300px");
-			clearingForms();
-			var timer = setTimeout(function(){
-				$("#folder-form").css("right", "0");
-			}, 500);
-		}
+		showingAddFolder();
 	});
 
 	$("#folder-form i").on("click", function(){
@@ -76,7 +48,7 @@ $(document).ready(function(){
 		} else if(pathD[2].id){
 			starterID = pathD[2].id;
 		}
-		console.log(starterID);
+		// console.log(starterID);
 
 
 		$("body").on("mouseup", function(upE){
@@ -88,12 +60,50 @@ $(document).ready(function(){
 				enderID = pathU[0].id;
 			} else if(pathU[1].id){
 				enderID = pathU[1].id;
+			} else if(pathU[2].id){
+				enderID = pathU[2].id;
 			}
 			console.log(enderID);
+			if(enderID === undefined || FullItem.allInstances.has(enderID) || enderID.split("")[0] !== "x"){
+				return null;
+			}
+			var mapItem = FullItem.allInstances.get(starterID);
+			mapItem.itemDeletion();
+			mapItem.identification = enderID;
+			mapItem.itemCreation(enderID);
+		  FullItem.allInstances.delete(starterID);
+			FullItem.allInstances.set(enderID, mapItem);	
 		});
 	});
 });
 
+
+class FullItem {
+	constructor(type, color, name) {
+		this.type = type;
+		this.color = color;
+		this.name = name;
+		this.identification = firstFreeID();
+	}
+	itemCreation(id) {
+		var item = $(".item#" + id);
+		var pictureInsert = '<i class="fas fa-'+ this.type +' icon-'+ this.color +'"></i>';
+		var textInsert = '<p class="Ftext">'+ this.name +'</p>';
+		item[0].children[0].innerHTML = pictureInsert;
+		item[0].children[1].innerHTML = textInsert;
+		item.removeClass("empty");
+		item.addClass("full");
+	}
+	itemDeletion() {
+		var item = $(".item#" + this.identification);
+		item[0].childNodes[0].innerHTML = "";
+		item[0].childNodes[1].innerHTML = "";
+		item.removeClass("full");
+		item.addClass("empty");
+	}
+}
+
+FullItem.allInstances = new Map;
 
 
 function updatingGrid(){
@@ -142,25 +152,6 @@ function getNumberOfItems(){
 	return items.length;
 }
 
-class FullItem {
-	constructor(type, color, name) {
-		this.type = type;
-		this.color = color;
-		this.name = name;
-		this.identification = firstFreeID();
-	}
-	itemCreation() {
-		var item = $(".item#" + this.identification);
-		var pictureInsert = '<i class="fas fa-'+ this.type +' icon-'+ this.color +'"></i>';
-		var textInsert = '<p class="Ftext">'+ this.name +'</p>';
-		item[0].children[0].innerHTML = pictureInsert;
-		item[0].children[1].innerHTML = textInsert;
-		item.removeClass("empty");
-		item.addClass("full");
-	}
-}
-FullItem.allInstances = new Map;
-
 function firstFreeID() {
 	return $(".item.empty").first().attr("id");
 }
@@ -203,7 +194,7 @@ function formItemCreation(type) {
 	var color = $('input[name="'+ type +'-color"]:checked').val();
 	var newItem = new FullItem(type, color, name);
 	FullItem.allInstances.set(newItem.identification, newItem);
-	newItem.itemCreation();
+	newItem.itemCreation(newItem.identification);
 	$("#"+ type +"-form").css("right", "-300px");
 	clearingForms();
 }
@@ -217,4 +208,47 @@ function isWordError(type) {
 		}
 	}
 	return false;
+}
+
+function togglingArrowContainer (rotVar, thisAA)  {
+	if(!($(thisAA).hasClass("hide"))){
+			$("#menu").css("top", "0");
+			$(thisAA).css("border-radius", "0");
+			$(thisAA).addClass("hide");
+			$("#arrow-container i").css("transform", "rotate("+ rotVar +"deg)");
+			rotVar += 180;
+		} else {
+			$("#menu").css("top", "-40px");
+			$(thisAA).css("border-radius", "50%");
+			$(thisAA).removeClass("hide");
+			$("#arrow-container i").css("transform", "rotate("+ rotVar +"deg)");
+			rotVar += 180;
+		}
+	return rotVar;
+}
+
+function showingAddFile() {
+	if( $("#folder-form").css("right")==="-300px" ) {
+		$("#file-form").css("right", "0");
+	} else {
+		$("#folder-form").css("right", "-300px");
+		clearingForms();
+		setTimeout(function() {
+			$("#file-form").css("right", "0");
+			$("#folder-form").css("right", "-300px");
+		}, 500);
+	}
+}
+
+function showingAddFolder() {
+		if( $("#file-form").css("right")==="-300px" ) {
+			$("#folder-form").css("right", "0");
+		} else {
+			$("#file-form").css("right", "-300px");
+			clearingForms();
+			setTimeout(function(){
+				$("#folder-form").css("right", "0");
+				$("#file-form").css("right", "-300px");
+			}, 500);
+		}
 }
