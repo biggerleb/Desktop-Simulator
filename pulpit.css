@@ -232,6 +232,70 @@ span.color3 {
 	transition: all 0.5s;
 }
 
+.context-menu {
+	position: absolute;
+	top: -100px;
+	left: 0;
+	border: 2px solid #965D7F;
+	width: 120px;
+	z-index: 10;
+	background-color: #A5668B;
+}
+
+.context-menu div {
+	width: 100%;
+	text-align: center;
+	padding: 2px 0;
+	color: #0E103D;
+}
+
+.context-menu div:hover {
+	background-color: #965D7F;
+}
+
+.context-delete {
+	border-bottom: 1px solid #965D7F;
+}
+
+.context-name {
+	border-top: 1px solid #965D7F;
+}
+
+.new-name-input {
+	width: 150px;
+	display: flex;
+	position: absolute;
+	z-index: 20;
+	top: -50px;
+}
+
+.new-name-input input {
+	width: 120px;
+	margin: 0;
+	border: 1px solid #f9f9f9;
+}
+
+.new-name-input button {
+	margin: 0;
+	width: 30px;
+	outline: none;
+	border-width: 0;
+	font-family: inherit;
+	color: #080922;
+	background-color: #f9f9f9;
+	transition: all 0.5s;
+}
+
+.new-name-input button:hover {
+	background-color: #965D7F;
+	color: white;
+}
+
+hr {
+	margin: 0;
+	background-color: #965D7F;
+}
+
 span {
 	width: 4px;
 }
