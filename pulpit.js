@@ -56,6 +56,7 @@ $(document).ready(function(){
 		$("body").on('click', function() {
 			$(".context-menu").css("top", "-100px").css("left", "0");
 			$("body").off('click');
+			$(".context-delete").off('click');
 		});
 		$(".context-delete").on('click', function(){
 			var mapItem = FullItem.allInstances.get(id);
@@ -70,6 +71,7 @@ $(document).ready(function(){
 				$('body').on('click', function(){
 					$('.new-name-input').css('top', '-50px').css('left', "0");
 					$('body').off('click');
+					$('.new-name-input button').off('click');
 				});
 			}, 100);
 			$('.new-name-input input').on('click', function(event){
@@ -78,6 +80,7 @@ $(document).ready(function(){
 			});
 			$('.new-name-input button').on('click', function(){
 				var newName = $('.new-name-input input').val();
+				$('.new-name-input input').val("");
 				var mapItem = FullItem.allInstances.get(id);
 				console.log(id);
 				mapItem.name = newName;
