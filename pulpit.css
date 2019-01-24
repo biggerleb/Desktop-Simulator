@@ -20,6 +20,7 @@
 	color: #0E103D;
 	border-bottom-left-radius: 20px;
 	transition: all 0.5s;
+	z-index: 7;
 }
 
 #menu div#add-file {
@@ -52,6 +53,7 @@
 	color: #EFE6E8;
 	border-radius: 50%;
 	transition: all 0.5s;
+	z-index: 7;
 }
 
 #arrow-container i {
@@ -119,6 +121,7 @@
 	border-bottom-left-radius: 20px;
 	border-top-left-radius: 20px;
 	transition: all 0.5s;
+	z-index: 7;
 }
 
 .select-color {
@@ -289,6 +292,23 @@ span.color3 {
 .new-name-input button:hover {
 	background-color: #965D7F;
 	color: white;
+}
+
+.folder-container {
+	position: absolute;
+	display: flex;
+	width: 330px;
+	height: 330px;
+	top: 200px;
+	left: 250px;
+	z-index: 5;
+	background-color: #fffcfd;
+	border: 2px solid #0E103D;
+	border-radius: 5px;
+
+	-webkit-box-shadow: 0px 2px 5px 0px rgba(14,16,61,0.5);
+	-moz-box-shadow: 0px 2px 5px 0px rgba(14,16,61,0.5);
+	box-shadow: 0px 2px 5px 0px rgba(14,16,61,0.5);
 }
 
 hr {

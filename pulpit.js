@@ -45,51 +45,36 @@ $(document).ready(function(){
 	});
 
 	$("div.container").on("contextmenu", "div.full div.picture, div.full p.Ftext", function(event){
-		var id = null;
-		if (event.originalEvent.path[1].id){
-			id = event.originalEvent.path[1].id;
-		} else if (event.originalEvent.path[2].id) {
-			id = event.originalEvent.path[2].id;
-		}
-		console.log(id);
-		$(".context-menu").css("top", event.pageY + "px").css("left", event.pageX + "px");
-		$("body").on('click', function() {
-			$(".context-menu").css("top", "-100px").css("left", "0");
-			$("body").off('click');
-			$(".context-delete").off('click');
-		});
-		$(".context-delete").on('click', function(){
-			var mapItem = FullItem.allInstances.get(id);
-			console.log(id);
-			mapItem.itemDeletion();
-			FullItem.allInstances.delete(id);
-			$(this).off('click');
-		});
-		$(".context-name").on('click', function(){
-			$('.new-name-input').css('top', event.pageY + 20 +"px").css('left', event.pageX + 10 + "px");
-			setTimeout(function(){
-				$('body').on('click', function(){
-					$('.new-name-input').css('top', '-50px').css('left', "0");
-					$('body').off('click');
-					$('.new-name-input button').off('click');
-				});
-			}, 100);
-			$('.new-name-input input').on('click', function(event){
-				event.stopPropagation();
-				$(this).off('click');
-			});
-			$('.new-name-input button').on('click', function(){
-				var newName = $('.new-name-input input').val();
-				$('.new-name-input input').val("");
-				var mapItem = FullItem.allInstances.get(id);
-				console.log(id);
-				mapItem.name = newName;
-				mapItem.itemCreation();
-				$(this).off('click');
-			});
-			$(this).off('click');
-		});
+		contextMenuHandler(event);
 	});
+
+	interact('.folder-container')
+	  .draggable({
+	    restrict: {
+	    	restriction: "parent",
+	    	endOnly: false,
+	    	elementRect: {
+	    		top: 0, left: 0, bottom: 1, right: 1
+	    	},
+	    },
+	    onmove: dragMoveListener
+	  })
+	  .resizable({
+	    // resize from all edges and corners
+	    edges: { left: true, right: true, bottom: true, top: true },
+
+	    // keep the edges inside the parent
+	    restrictEdges: {
+	      outer: 'parent',
+	      endOnly: false,
+	    },
+
+	    // minimum size
+	    restrictSize: {
+	      min: { width: 330, height: 330 },
+	    },
+	  })
+	  .on('resizemove', resizeMoveListener);
 });
 
 
@@ -291,7 +276,7 @@ function fileDragging(downE){
 
 			$("body").on("mouseup", function(upE){
 				$("body").off();
-				$("body").css("cursor", "default");
+				$("body").css("cursor", "");
 				var pathU = upE.originalEvent.path;
 				var enderID;
 				if(pathU[0].id) {
@@ -314,3 +299,71 @@ function fileDragging(downE){
 			});
 		}
 	}
+
+	function contextMenuHandler(event) {
+		var id = null;
+		if (event.originalEvent.path[1].id){
+			id = event.originalEvent.path[1].id;
+		} else if (event.originalEvent.path[2].id) {
+			id = event.originalEvent.path[2].id;
+		}
+		console.log(id);
+		$(".context-menu").css("top", event.pageY + "px").css("left", event.pageX + "px");
+		$("body").on('click', function() {
+			$(".context-menu").css("top", "-100px").css("left", "0");
+			$("body").off('click');
+			$(".context-delete").off('click');
+		});
+		$(".context-delete").on('click', function(){
+			var mapItem = FullItem.allInstances.get(id);
+			mapItem.itemDeletion();
+			FullItem.allInstances.delete(id);
+			$(this).off('click');
+		});
+		$(".context-name").on('click', function(){
+			$('.new-name-input').css('top', event.pageY + 20 +"px").css('left', event.pageX + 10 + "px");
+			setTimeout(function(){
+				$('body').on('click', function(){
+					$('.new-name-input').css('top', '-50px').css('left', "0");
+					$('body').off('click');
+					$('.new-name-input button').off('click');
+				});
+			}, 100);
+			$('.new-name-input input').on('click', function(event){
+				event.stopPropagation();
+				$(this).off('click');
+			});
+			$('.new-name-input button').on('click', function(){
+				var newName = $('.new-name-input input').val();
+				$('.new-name-input input').val("");
+				var mapItem = FullItem.allInstances.get(id);
+				mapItem.name = newName;
+				mapItem.itemCreation();
+				$(this).off('click');
+			});
+			$(this).off('click');
+		});
+	}
+
+	function dragMoveListener (event) {
+  	var target = event.target;
+  	var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+    var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+    target.style.webkitTransform = target.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
+    target.setAttribute('data-x', x);
+    target.setAttribute('data-y', y);
+  }
+
+  function resizeMoveListener (event) {
+  	var target = event.target,
+        x = (parseFloat(target.getAttribute('data-x')) || 0),
+        y = (parseFloat(target.getAttribute('data-y')) || 0);
+    target.style.width  = event.rect.width + 'px';
+    target.style.height = event.rect.height + 'px';
+    x += event.deltaRect.left;
+    y += event.deltaRect.top;
+    target.style.webkitTransform = target.style.transform =
+        'translate(' + x + 'px,' + y + 'px)';
+    target.setAttribute('data-x', x);
+    target.setAttribute('data-y', y);
+  }
