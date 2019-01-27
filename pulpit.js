@@ -1,10 +1,10 @@
 $(document).ready(function(){
-	fillingGrid();
+	fillingGrid('.container');
 
 	var resizeTimer;
 	$(window).resize(function(){
 		clearTimeout(resizeTimer);
-		resizeTimer = setTimeout(updatingGrid, 50);  // setting delay to avoid bugs
+		resizeTimer = setTimeout(updatingGrid('.container'), 50);  // setting delay to avoid bugs
 	});
 
 	var rotVar = 180;
@@ -48,8 +48,57 @@ $(document).ready(function(){
 		contextMenuHandler(event);
 	});
 
+	$('div.container').on('click', 'div.full div.picture', function(event) {
+		event.stopPropagation();
+		var parNode = $(this)[0].nextSibling.children[0];
+		$( parNode ).css('background-color', '#0E103D').css('color', 'white');
+		$('body').on('click', function(){
+			$( parNode ).css('background-color', 'inherit').css('color', '#080922');
+			$('body').off('click');
+		});
+	});
+
+	$('div.container').on('click', 'div.full p.Ftext', function(event){
+		event.stopPropagation();
+		var parNode = this;
+		$(parNode).css('background-color', '#0E103D').css('color', 'white');
+		$('body').on('click', function(){
+			$(parNode).css('background-color', 'inherit').css('color', '#080922');
+			$('body').off('click');
+		});
+	});
+
+	$('div.container').on('click','.folder-header i' ,function(event){
+		var folder = $( event.originalEvent.path[2] );
+		folder.css('display', 'none');
+	})
+
+	$('div.container').on('dblclick', 'i.fas.fa-folder', function(event){
+		var parNode = $($($(this)[0])[0].parentElement)[0].nextSibling.children[0];
+		// console.log(parNode);
+		$(parNode).css('background-color', 'inherit').css('color', '#080922');
+		if(event.originalEvent.path[2].id) {
+			console.log(event.originalEvent.path[2].id);
+			var id = event.originalEvent.path[2].id;
+		} else {
+			return null;
+		}
+		if(folders.get(id)){
+			folders.get(id).css('display', 'initial');
+		} else {
+			var folderName = FullItem.allInstances.get(id).name;
+			var newFolder = '<div class="folder-container" id="'+ id + 'folder' +'"><div class="folder-header">'+ folderName +'<i class="fas fa-times-circle exit-folder"></i></div><div class="folder-grid"></div></div>'
+			$('div.container').append(newFolder);
+			newFolder = $('.folder-container#'+id+'folder');
+			folders.set(id, newFolder);
+			fillingGrid('.folder-container#'+id+'folder .folder-grid');
+		}
+	});
+
 	interact('.folder-container')
 	  .draggable({
+	  	allowFrom: '.folder-header',
+	  	ignoreFrom: 'i',
 	    restrict: {
 	    	restriction: "parent",
 	    	endOnly: false,
@@ -60,16 +109,12 @@ $(document).ready(function(){
 	    onmove: dragMoveListener
 	  })
 	  .resizable({
-	    // resize from all edges and corners
-	    edges: { left: true, right: true, bottom: true, top: true },
-
-	    // keep the edges inside the parent
+	  	ignoreFrom: 'i',
+	    edges: { left: true, right: true, bottom: true, top: false },
 	    restrictEdges: {
 	      outer: 'parent',
 	      endOnly: false,
 	    },
-
-	    // minimum size
 	    restrictSize: {
 	      min: { width: 330, height: 330 },
 	    },
@@ -78,13 +123,15 @@ $(document).ready(function(){
 });
 
 
+var folders = new Map;
 
 class FullItem {
-	constructor(type, color, name) {
+	constructor(type, color, name, containerSelector) {
 		this.type = type;
 		this.color = color;
 		this.name = name;
-		this.identification = firstFreeID();
+		this.containerSelector = containerSelector;
+		this.identification = firstFreeID('.container');
 	}
 	itemCreation() {
 		var item = $(".item#" + this.identification);
@@ -107,14 +154,15 @@ class FullItem {
 FullItem.allInstances = new Map;
 
 
-function updatingGrid(){
-	var windowHeight = window.innerHeight;
-	var windowWidth = window.innerWidth;
+function updatingGrid(containerSelector){
+	var container = $(containerSelector)[0];
+	var windowHeight = container.clientHeight;
+	var windowWidth = container.clientWidth;
 	var xItemsNum = Math.floor(windowWidth / 100);
 	var yItemsNum = Math.floor(windowHeight / 100);
 	var itemsCapacity = xItemsNum * yItemsNum;
-	var itemsAlreadyCreated = getNumberOfItems();
-	var items = $(".item");
+	var itemsAlreadyCreated = getNumberOfItems(containerSelector);
+	var items = $( containerSelector + " > .item");
 	// when screen gets smaller  !!!ERROR WHEN MORE FULL ITEMS THAN THERE IS SPACE IN NEW GRID - solution get those files to new folder
 	if(items.length > itemsCapacity){
 		var counter = 0;
@@ -129,32 +177,34 @@ function updatingGrid(){
 	}
 	// when screen gets bigger
 	if(items.length < itemsCapacity){
-		fillingGrid();
+		fillingGrid(containerSelector);
 	}
 }
 
 var itemID = 1;
-function fillingGrid(){
-	var windowHeight = window.innerHeight;
-	var windowWidth = window.innerWidth;
+function fillingGrid(containerSelector){
+	// console.log(itemID);
+	var container = $(containerSelector)[0];
+	var windowHeight = container.clientHeight;
+	var windowWidth = container.clientWidth;
 	var xItemsNum = Math.floor(windowWidth / 100);
 	var yItemsNum = Math.floor(windowHeight / 100);
 	var itemsCapacity = xItemsNum * yItemsNum;
-	var itemsAlreadyCreated = getNumberOfItems();
+	var itemsAlreadyCreated = getNumberOfItems(containerSelector);
 	for(var i = 0; i< (itemsCapacity - itemsAlreadyCreated); i++) {
 		var itemElement = '<div class="item empty" id="x'+ itemID +'"><div class="picture"></div><div class="file-name"></div></div>';
-		$(".container").append(itemElement);
+		$(containerSelector).append(itemElement);
 		itemID++;
 	}
 }
 
-function getNumberOfItems(){
-	var items = $(".item");
+function getNumberOfItems(containerSelector){
+	var items = $(containerSelector + " > .item");
 	return items.length;
 }
 
-function firstFreeID() {
-	return $(".item.empty").first().attr("id");
+function firstFreeID(containerSelector) {
+	return $(containerSelector + " > .item.empty").first().attr("id");
 }
 
 function clearingForms() {
@@ -193,7 +243,7 @@ function formItemCreation(type) {
 	}
 	var name = $('input[name="'+ type +'-name"]').val();
 	var color = $('input[name="'+ type +'-color"]:checked').val();
-	var newItem = new FullItem(type, color, name);
+	var newItem = new FullItem(type, color, name, '.container');
 	FullItem.allInstances.set(newItem.identification, newItem);
 	newItem.itemCreation();
 	$("#"+ type +"-form").css("right", "-300px");
@@ -286,6 +336,23 @@ function fileDragging(downE){
 				} else if(pathU[2].id){
 					enderID = pathU[2].id;
 				}
+
+				// console.log( $( $('.item#'+enderID)[0].parentElement )[0].parentElement.id );
+				var folderID;
+				try {
+					folderID = $( $('.item#'+enderID)[0].parentElement )[0].parentElement.id;
+					if(starterID + 'folder' === folderID){
+						cursorToNotAllowed();
+						return null;
+					}
+				} catch(error) {
+					cursorToNotAllowed();
+					return null;
+				}
+
+				if(starterID === enderID) {
+					return null;
+				}
 				if(enderID === undefined || FullItem.allInstances.has(enderID) || enderID.split("")[0] !== "x"){
 					cursorToNotAllowed();
 					return null;
@@ -307,7 +374,6 @@ function fileDragging(downE){
 		} else if (event.originalEvent.path[2].id) {
 			id = event.originalEvent.path[2].id;
 		}
-		console.log(id);
 		$(".context-menu").css("top", event.pageY + "px").css("left", event.pageX + "px");
 		$("body").on('click', function() {
 			$(".context-menu").css("top", "-100px").css("left", "0");
