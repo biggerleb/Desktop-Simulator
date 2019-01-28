@@ -38,7 +38,9 @@ $(document).ready(function(){
 		formItemCreation('folder');
 	});
 
-	$("div.container").on("mousedown","div.full div.picture" , fileDragging);
+	$("div.container").on("mousedown","div.full div.picture" , function(event){
+		fileDragging(event);
+	});
 
 	$("html").on("contextmenu", function(event){
 		return false;
@@ -48,24 +50,37 @@ $(document).ready(function(){
 		contextMenuHandler(event);
 	});
 
-	$('div.container').on('click', 'div.full div.picture', function(event) {
-		event.stopPropagation();
-		var parNode = $(this)[0].nextSibling.children[0];
-		$( parNode ).css('background-color', '#0E103D').css('color', 'white');
-		$('body').on('click', function(){
-			$( parNode ).css('background-color', 'inherit').css('color', '#080922');
-			$('body').off('click');
-		});
-	});
+	// $('div.container').on('click', 'div.full div.picture', function(event) {
+	// 	event.stopPropagation();
+	// 	var parNode = $(this)[0].nextSibling.children[0];
+	// 	$( parNode ).css('background-color', '#0E103D').css('color', 'white');
+	// 	$('body').on('click', function(){
+	// 		$( parNode ).css('background-color', 'inherit').css('color', '#080922');
+	// 		$('body').off('click');
+	// 	});
+	// });
 
-	$('div.container').on('click', 'div.full p.Ftext', function(event){
-		event.stopPropagation();
-		var parNode = this;
-		$(parNode).css('background-color', '#0E103D').css('color', 'white');
-		$('body').on('click', function(){
-			$(parNode).css('background-color', 'inherit').css('color', '#080922');
-			$('body').off('click');
-		});
+	// $('div.container').on('click', 'div.full p.Ftext', function(event){
+	// 	event.stopPropagation();
+	// 	var parNode = this;
+	// 	$(parNode).css('background-color', '#0E103D').css('color', 'white');
+	// 	$('body').on('click', function(){
+	// 		$(parNode).css('background-color', 'inherit').css('color', '#080922');
+	// 		$('body').off('click');
+	// 	});
+	// });
+
+	$('div.container').on('click contextmenu', 'div.full div.picture, div.full p.Ftext', function(event){
+		var id = null;
+		if (event.originalEvent.path[1].id){
+			id = event.originalEvent.path[1].id;
+		} else if (event.originalEvent.path[2].id) {
+			id = event.originalEvent.path[2].id;
+		}
+		if(highlightData.is){
+			unHighlightElement(highlightData.id);
+		}
+		highlightElement(id);
 	});
 
 	$('div.container').on('click','.folder-header i' ,function(event){
@@ -78,7 +93,6 @@ $(document).ready(function(){
 		// console.log(parNode);
 		$(parNode).css('background-color', 'inherit').css('color', '#080922');
 		if(event.originalEvent.path[2].id) {
-			console.log(event.originalEvent.path[2].id);
 			var id = event.originalEvent.path[2].id;
 		} else {
 			return null;
@@ -87,7 +101,7 @@ $(document).ready(function(){
 			folders.get(id).css('display', 'initial');
 		} else {
 			var folderName = FullItem.allInstances.get(id).name;
-			var newFolder = '<div class="folder-container" id="'+ id + 'folder' +'"><div class="folder-header">'+ folderName +'<i class="fas fa-times-circle exit-folder"></i></div><div class="folder-grid"></div></div>'
+			var newFolder = '<div class="folder-container" id="'+ id + 'folder' +'"><div class="folder-header"><p>'+ folderName +'</p><i class="fas fa-times-circle exit-folder"></i></div><div class="folder-grid"></div></div>'
 			$('div.container').append(newFolder);
 			newFolder = $('.folder-container#'+id+'folder');
 			folders.set(id, newFolder);
@@ -171,8 +185,8 @@ function updatingGrid(containerSelector){
 			if(!($(items[index]).hasClass("full"))){
 				$(items[index]).remove();
 				counter++;
-				index--;
 			}
+			index--;
 		}
 	}
 	// when screen gets bigger
@@ -324,6 +338,15 @@ function fileDragging(downE){
 				starterID = pathD[2].id;
 			}
 
+			// tracking changes in folders organisation
+			var icon = pathD[0];
+			var isItFolder = $(icon).hasClass('fa-folder');
+			var folderHasItsContainer = false;
+			if(isItFolder) {
+				folderHasItsContainer = folders.has(starterID);
+			}
+
+
 			$("body").on("mouseup", function(upE){
 				$("body").off();
 				$("body").css("cursor", "");
@@ -363,6 +386,12 @@ function fileDragging(downE){
 				mapItem.itemCreation();
 			  FullItem.allInstances.delete(starterID);
 				FullItem.allInstances.set(enderID, mapItem);	
+				if (folderHasItsContainer) {
+					var folder = folders.get(starterID);
+					folders.delete(starterID);
+					folder.attr('id', enderID + 'folder');
+					folders.set(enderID, folder);
+				}
 			});
 		}
 	}
@@ -379,25 +408,34 @@ function fileDragging(downE){
 			$(".context-menu").css("top", "-100px").css("left", "0");
 			$("body").off('click');
 			$(".context-delete").off('click');
+			$(".context-name").off('click');
+			// $(".new-name-input button").off('click');
 		});
 		$(".context-delete").on('click', function(){
+			console.log(id);
 			var mapItem = FullItem.allInstances.get(id);
 			mapItem.itemDeletion();
 			FullItem.allInstances.delete(id);
 			$(this).off('click');
 		});
-		$(".context-name").on('click', function(){
+		$(".context-name").on('click', function(event){
+
 			$('.new-name-input').css('top', event.pageY + 20 +"px").css('left', event.pageX + 10 + "px");
+			
 			setTimeout(function(){
-				$('body').on('click', function(){
+				$('html').on('click contextmenu', function(event){
 					$('.new-name-input').css('top', '-50px').css('left', "0");
-					$('body').off('click');
+					$('html').off('click contextmenu');
 					$('.new-name-input button').off('click');
+					$('.new-name-input input').val('');
+					$('html').on('contextmenu', function(){
+						return false;
+					});
 				});
-			}, 100);
+			} ,30);
+			
 			$('.new-name-input input').on('click', function(event){
 				event.stopPropagation();
-				$(this).off('click');
 			});
 			$('.new-name-input button').on('click', function(){
 				var newName = $('.new-name-input input').val();
@@ -405,6 +443,13 @@ function fileDragging(downE){
 				var mapItem = FullItem.allInstances.get(id);
 				mapItem.name = newName;
 				mapItem.itemCreation();
+				$('.new-name-input').css('top', '-50px').css('left', "0");
+
+				if (folders.has(id)) {
+					// console.log(id);
+					$(folders.get(id)[0].children[0])[0].children[0].textContent = newName;
+				}
+
 				$(this).off('click');
 			});
 			$(this).off('click');
@@ -420,6 +465,7 @@ function fileDragging(downE){
     target.setAttribute('data-y', y);
   }
 
+  var resizeFolderTimer;
   function resizeMoveListener (event) {
   	var target = event.target,
         x = (parseFloat(target.getAttribute('data-x')) || 0),
@@ -432,4 +478,26 @@ function fileDragging(downE){
         'translate(' + x + 'px,' + y + 'px)';
     target.setAttribute('data-x', x);
     target.setAttribute('data-y', y);
+    
+    clearTimeout(resizeFolderTimer);
+		var folderSelector = $(target).attr('id');
+		console.log(folderSelector);
+		resizeFolderTimer = setTimeout(updatingGrid('#'+folderSelector+' .folder-grid') ,50);
+  }
+
+  var highlightData = {
+  	is: false,
+  	id: null
+  };
+
+  function highlightElement(id) {
+  	$( $('.item#'+id)[0].childNodes[1].childNodes[0] ).css('background-color', '#0E103D').css('color', 'white');
+  	highlightData.is = true;
+  	highlightData.id = id;
+  }
+
+  function unHighlightElement(id) {
+  	$( $('.item#'+id)[0].childNodes[1].childNodes[0] ).css('background-color', 'inherit').css('color', '#080922');
+  	highlightData.is = false;
+  	highlightData.id = null;
   }

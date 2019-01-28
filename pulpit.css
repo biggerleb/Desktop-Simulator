@@ -285,18 +285,24 @@ span.color3 {
 .new-name-input input {
 	width: 120px;
 	margin: 0;
-	border: 1px solid #f9f9f9;
+	border: 1px solid #0E103D;
+	border-top-left-radius: 3px;
+	border-bottom-left-radius: 3px;
+	outline: none;
 }
 
 .new-name-input button {
 	margin: 0;
 	width: 30px;
 	outline: none;
-	border-width: 0;
 	font-family: inherit;
 	color: #080922;
 	background-color: #f9f9f9;
 	transition: all 0.5s;
+	border: 1px solid #0E103D;
+	border-left: none;
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
 }
 
 .new-name-input button:hover {
@@ -345,6 +351,11 @@ span.color3 {
 	text-align: center;
 	color: white;
 	background-color: #0E103D;
+}
+
+.folder-header p {
+	margin: 0;
+	padding: 0;
 }
 
 hr {
