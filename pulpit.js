@@ -50,25 +50,6 @@ $(document).ready(function(){
 		contextMenuHandler(event);
 	});
 
-	// $('div.container').on('click', 'div.full div.picture', function(event) {
-	// 	event.stopPropagation();
-	// 	var parNode = $(this)[0].nextSibling.children[0];
-	// 	$( parNode ).css('background-color', '#0E103D').css('color', 'white');
-	// 	$('body').on('click', function(){
-	// 		$( parNode ).css('background-color', 'inherit').css('color', '#080922');
-	// 		$('body').off('click');
-	// 	});
-	// });
-
-	// $('div.container').on('click', 'div.full p.Ftext', function(event){
-	// 	event.stopPropagation();
-	// 	var parNode = this;
-	// 	$(parNode).css('background-color', '#0E103D').css('color', 'white');
-	// 	$('body').on('click', function(){
-	// 		$(parNode).css('background-color', 'inherit').css('color', '#080922');
-	// 		$('body').off('click');
-	// 	});
-	// });
 
 	$('div.container').on('click contextmenu', 'div.full div.picture, div.full p.Ftext', function(event){
 		var id = null;
@@ -81,6 +62,21 @@ $(document).ready(function(){
 			unHighlightElement(highlightData.id);
 		}
 		highlightElement(id);
+	});
+
+	$('html').on("click contextmenu", function(event){
+		var pathArr = event.originalEvent.path;
+		var classes = pathArr[0].classList;
+		if ( classes.contains('picture') && pathArr[1].classList.contains("full") ) {
+			return null;
+		} else if ( classes.contains('Ftext') || ( classes.contains('fas') && ( classes.contains('fa-file') || classes.contains('fa-folder') ) ) ) {
+			return null;
+		} else if ( classes.contains('context-name') ) {
+			return null;
+		}
+		if (highlightData.is) {
+			unHighlightElement(highlightData.id);
+		}
 	});
 
 	$('div.container').on('click','.folder-header i' ,function(event){
@@ -346,9 +342,13 @@ function fileDragging(downE){
 				folderHasItsContainer = folders.has(starterID);
 			}
 
+			// tracking changes in highlightment
+			if(highlightData.is && highlightData.id !== starterID){
+				unHighlightElement(highlightData.id);
+			}
 
 			$("body").on("mouseup", function(upE){
-				$("body").off();
+				$("body").off("mouseup");
 				$("body").css("cursor", "");
 				var pathU = upE.originalEvent.path;
 				var enderID;
@@ -392,6 +392,7 @@ function fileDragging(downE){
 					folder.attr('id', enderID + 'folder');
 					folders.set(enderID, folder);
 				}
+				highlightElement(enderID);
 			});
 		}
 	}
@@ -403,16 +404,16 @@ function fileDragging(downE){
 		} else if (event.originalEvent.path[2].id) {
 			id = event.originalEvent.path[2].id;
 		}
+		$(".context-delete").off('click');
+		$(".context-name").off('click');
 		$(".context-menu").css("top", event.pageY + "px").css("left", event.pageX + "px");
-		$("body").on('click', function() {
+		$("body").on('click.hideContextMenu', function() {
 			$(".context-menu").css("top", "-100px").css("left", "0");
-			$("body").off('click');
+			$("body").off('click.hideContextMenu');
 			$(".context-delete").off('click');
 			$(".context-name").off('click');
-			// $(".new-name-input button").off('click');
 		});
 		$(".context-delete").on('click', function(){
-			console.log(id);
 			var mapItem = FullItem.allInstances.get(id);
 			mapItem.itemDeletion();
 			FullItem.allInstances.delete(id);
@@ -423,14 +424,11 @@ function fileDragging(downE){
 			$('.new-name-input').css('top', event.pageY + 20 +"px").css('left', event.pageX + 10 + "px");
 			
 			setTimeout(function(){
-				$('html').on('click contextmenu', function(event){
+				$('html').on('click.hideInput contextmenu.hideInput', function(event){
 					$('.new-name-input').css('top', '-50px').css('left', "0");
-					$('html').off('click contextmenu');
+					$('html').off('.hideInput');
 					$('.new-name-input button').off('click');
 					$('.new-name-input input').val('');
-					$('html').on('contextmenu', function(){
-						return false;
-					});
 				});
 			} ,30);
 			
