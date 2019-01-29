@@ -20,7 +20,15 @@
 	color: #0E103D;
 	border-bottom-left-radius: 20px;
 	transition: all 0.5s;
-	z-index: 7;
+	z-index: 700;
+}
+
+#menu:hover, #arrow-container:hover {
+	cursor: pointer;
+}
+
+.create-button:hover, #file-form i:hover {
+	cursor: pointer;
 }
 
 #menu div#add-file {
@@ -53,7 +61,7 @@
 	color: #EFE6E8;
 	border-radius: 50%;
 	transition: all 0.5s;
-	z-index: 7;
+	z-index: 700;
 }
 
 #arrow-container i {
@@ -107,6 +115,10 @@
 	padding: 1px 4px;
 }
 
+.file-name:hover {
+	cursor: default;
+}
+
 .form {
 	position: absolute;
 	top: 80px;
@@ -122,7 +134,7 @@
 	border-bottom-left-radius: 20px;
 	border-top-left-radius: 20px;
 	transition: all 0.5s;
-	z-index: 7;
+	z-index: 700;
 }
 
 .select-color {
@@ -245,32 +257,33 @@ span.color3 {
 	transition: all 0.5s;
 }
 
-.context-menu {
+.context-menu, .context-add-menu {
 	position: absolute;
 	top: -100px;
 	left: 0;
 	border: 2px solid #965D7F;
 	width: 120px;
-	z-index: 10;
+	z-index: 1000;
 	background-color: #A5668B;
 }
 
-.context-menu div {
+.context-menu div, .context-add-menu div {
 	width: 100%;
 	text-align: center;
 	padding: 2px 0;
 	color: #0E103D;
 }
 
-.context-menu div:hover {
+.context-menu div:hover, .context-add-menu div:hover {
 	background-color: #965D7F;
+	cursor: pointer;
 }
 
-.context-delete {
+.context-delete, .context-add-file {
 	border-bottom: 1px solid #965D7F;
 }
 
-.context-name {
+.context-name, .context-add-folder {
 	border-top: 1px solid #965D7F;
 }
 
@@ -278,7 +291,7 @@ span.color3 {
 	width: 150px;
 	display: flex;
 	position: absolute;
-	z-index: 20;
+	z-index: 2000;
 	top: -50px;
 }
 
@@ -317,7 +330,7 @@ span.color3 {
 	height: 330px;
 	top: 250px;
 	left: 250px;
-	z-index: 5;
+	z-index: 2;
 	background-color: #fffcfd;
 	border: 2px solid #0E103D;
 	border-radius: 5px;
@@ -356,6 +369,16 @@ span.color3 {
 .folder-header p {
 	margin: 0;
 	padding: 0;
+}
+
+p, button {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
 }
 
 hr {
