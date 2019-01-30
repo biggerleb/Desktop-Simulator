@@ -57,7 +57,13 @@ $(document).ready(function(){
 	});
 
 	$('div.container').on('contextmenu.addMenu', '.item.empty', function(event){
-		$('.context-add-menu').css("top", event.pageY + "px").css("left", event.pageX + "px");
+		var xCoord;
+		var yCoord;
+		window.innerWidth - event.pageX < 120 ? xCoord = window.innerWidth - 120 : xCoord = event.pageX;
+		window.innerHeight - event.pageY < 50 ? yCoord = window.innerHeight - 50 : yCoord = event.pageY;
+		console.log( xCoord );
+
+		$('.context-add-menu').css("top", yCoord + "px").css("left", xCoord + "px");
 		var id;
 		if (event.originalEvent.path[0].id) {
 			id = event.originalEvent.path[0].id;
