@@ -155,6 +155,10 @@ $(document).ready(function(){
 		}
 	});
 
+	$('.div.container').on('dblclick', 'i.fas.fa-file', function(event){
+		
+	});
+
 	$('div.container').on('mousedown.zINDEX', '.folder-container', function(event){
 		applyNewZIndex($(this));
 	});
@@ -184,6 +188,77 @@ $(document).ready(function(){
 	    },
 	  })
 	  .on('resizemove', resizeMoveListener);
+
+	  // canvas interaction
+	  
+	  context = document.getElementById('canvas').getContext('2d');
+
+		context.strokeStyle = "#df4b26";
+		context.lineJoin = "round";
+		context.lineWidth = 5;
+
+		var paint = false;
+
+		$('#canvas').mousedown(function(event){
+			// console.log(  $($(this)[0].offsetParent)[0].dataset );
+			var translateX = 0;
+			var translateY = 0;
+			var dataSet = $($(this)[0].offsetParent)[0].dataset;
+			if( dataSet.x ){
+				translateX = parseInt(dataSet.x);
+				translateY = parseInt(dataSet.y);
+				// console.log(translateX, translateY);
+			}
+			var mouseX = event.pageX - ($(this)[0].offsetParent.offsetLeft + translateX);
+			var mouseY = event.pageY - ($(this)[0].offsetParent.offsetTop + this.offsetTop + translateY);
+
+			paint = true;
+			addClick(mouseX, mouseY);
+			redraw();
+		});
+
+		$('#canvas').mousemove(function(event){
+			var translateX = 0;
+			var translateY = 0;
+			var dataSet = $($(this)[0].offsetParent)[0].dataset;
+			if( dataSet.x ){
+				translateX = parseInt(dataSet.x);
+				translateY = parseInt(dataSet.y);
+				// console.log(translateX, translateY);
+			}
+			var mouseX = event.pageX - ($(this)[0].offsetParent.offsetLeft + translateX);
+			var mouseY = event.pageY - ($(this)[0].offsetParent.offsetTop + this.offsetTop + translateY);
+
+			if (paint) {
+				addClick(mouseX, mouseY, true);
+				redraw();
+			}
+		});
+
+		$('#canvas').mouseup(function(){
+			clickX = new Array();
+			clickY = new Array();
+			clickDrag = new Array();
+			paint = false;
+		});
+
+		$('#canvas').mouseleave(function(){
+			paint = false;
+		});
+
+		interact('.file-container')
+	  .draggable({
+	  	allowFrom: '.file-header',
+	  	ignoreFrom: 'i',
+	    restrict: {
+	    	restriction: "parent",
+	    	endOnly: false,
+	    	elementRect: {
+	    		top: 0, left: 0, bottom: 1, right: 1
+	    	},
+	    },
+	    onmove: dragMoveListener
+	  });
 });
 
 
@@ -595,3 +670,28 @@ function fileDragging(downE){
   	JQfolderContainer.css('z-index', zIndex.toString());
   	zIndex++;
   }
+
+
+  var clickX = new Array();
+	var clickY = new Array();
+	var clickDrag = new Array();
+
+  function addClick(x, y, dragging) {
+		clickX.push(x);
+		clickY.push(y);
+		clickDrag.push(dragging);
+	}
+
+	function redraw() {
+		for (var i=0; i < clickX.length; i++) {
+			context.beginPath();
+			if( clickDrag[i] && i ) {
+				context.moveTo(clickX[i-1], clickY[i-1]);
+			} else {
+				context.moveTo(clickX[i]-1, clickY[i])
+			}
+			context.lineTo(clickX[i], clickY[i]);
+			context.closePath();
+			context.stroke();
+		}
+	}

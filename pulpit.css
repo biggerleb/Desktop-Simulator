@@ -323,7 +323,7 @@ span.color3 {
 	color: white;
 }
 
-.folder-container {
+.folder-container, .file-container {
 	position: absolute;
 	display: flex;
 	width: 330px;
@@ -334,7 +334,7 @@ span.color3 {
 	background-color: #fffcfd;
 	border: 2px solid #0E103D;
 	border-radius: 5px;
-	padding-top: 20px;
+	padding-top: 18px;
 
 	-webkit-box-shadow: 0px 2px 5px 0px rgba(14,16,61,0.5);
 	-moz-box-shadow: 0px 2px 5px 0px rgba(14,16,61,0.5);
@@ -353,7 +353,7 @@ span.color3 {
 	overflow: hidden;
 }
 
-.folder-header {
+.folder-header, .file-header {
 	position: absolute;
 	width: 100%;
 	height: 20px;
@@ -366,7 +366,7 @@ span.color3 {
 	background-color: #0E103D;
 }
 
-.folder-header p {
+.folder-header p, .file-header p {
 	margin: 0;
 	padding: 0;
 }
