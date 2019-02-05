@@ -248,7 +248,7 @@ span.color3 {
 	transition: all 0.5s;
 }
 
-.exit-folder {
+.exit-folder, .exit-file {
 	position: absolute;
 	right: 4px;
 	top: 3px;
@@ -371,6 +371,42 @@ span.color3 {
 	padding: 0;
 }
 
+.color-button {
+	position: absolute;
+	width: 20px;
+	height: 20px;
+	border-radius: 5px;
+	transition-duration: 0.2s;
+}
+
+.color-button:hover {
+	cursor: pointer;
+}
+
+.CB1 {
+	top: 20px;
+	right: 49px;
+	background-color: #333676;
+}
+
+.CB2 {
+	top: 20px;
+	right: 26px;
+	background-color: #c56e00;
+}
+
+.CB3 {
+	top: 20px;
+	right: 3px;
+	background-color: #979f00;
+}
+
+.CBACTIVE {
+	animation-name: colorButtonClick;
+	animation-duration: 0.4s;
+	transform: scale(1.1); 
+}
+
 p, button {
   -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
@@ -411,3 +447,8 @@ html, body {
 	box-sizing: border-box;
 }
 
+@keyframes colorButtonClick {
+	0% {transform: scale(1);}
+	30% {transform: scale(0.9);}
+	100% {transform: scale(1.1);}
+}

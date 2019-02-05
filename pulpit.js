@@ -61,7 +61,6 @@ $(document).ready(function(){
 		var yCoord;
 		window.innerWidth - event.pageX < 120 ? xCoord = window.innerWidth - 120 : xCoord = event.pageX;
 		window.innerHeight - event.pageY < 50 ? yCoord = window.innerHeight - 50 : yCoord = event.pageY;
-		console.log( xCoord );
 
 		$('.context-add-menu').css("top", yCoord + "px").css("left", xCoord + "px");
 		var id;
@@ -155,12 +154,18 @@ $(document).ready(function(){
 		}
 	});
 
-	$('.div.container').on('dblclick', 'i.fas.fa-file', function(event){
-		
+	$('div.container').on('dblclick', 'i.fas.fa-file', function(event){
+		showOrCreate(this, event, 'file', files);
 	});
 
 	$('div.container').on('mousedown.zINDEX', '.folder-container', function(event){
 		applyNewZIndex($(this));
+	});
+
+	$('div.container').on('click', '.color-button', function(event){
+		var parentEl = this.parentElement;
+		$(parentEl.children).removeClass('CBACTIVE');
+		this.classList.add('CBACTIVE');
 	});
 
 	interact('.folder-container')
@@ -189,63 +194,6 @@ $(document).ready(function(){
 	  })
 	  .on('resizemove', resizeMoveListener);
 
-	  // canvas interaction
-	  
-	  context = document.getElementById('canvas').getContext('2d');
-
-		context.strokeStyle = "#df4b26";
-		context.lineJoin = "round";
-		context.lineWidth = 5;
-
-		var paint = false;
-
-		$('#canvas').mousedown(function(event){
-			// console.log(  $($(this)[0].offsetParent)[0].dataset );
-			var translateX = 0;
-			var translateY = 0;
-			var dataSet = $($(this)[0].offsetParent)[0].dataset;
-			if( dataSet.x ){
-				translateX = parseInt(dataSet.x);
-				translateY = parseInt(dataSet.y);
-				// console.log(translateX, translateY);
-			}
-			var mouseX = event.pageX - ($(this)[0].offsetParent.offsetLeft + translateX);
-			var mouseY = event.pageY - ($(this)[0].offsetParent.offsetTop + this.offsetTop + translateY);
-
-			paint = true;
-			addClick(mouseX, mouseY);
-			redraw();
-		});
-
-		$('#canvas').mousemove(function(event){
-			var translateX = 0;
-			var translateY = 0;
-			var dataSet = $($(this)[0].offsetParent)[0].dataset;
-			if( dataSet.x ){
-				translateX = parseInt(dataSet.x);
-				translateY = parseInt(dataSet.y);
-				// console.log(translateX, translateY);
-			}
-			var mouseX = event.pageX - ($(this)[0].offsetParent.offsetLeft + translateX);
-			var mouseY = event.pageY - ($(this)[0].offsetParent.offsetTop + this.offsetTop + translateY);
-
-			if (paint) {
-				addClick(mouseX, mouseY, true);
-				redraw();
-			}
-		});
-
-		$('#canvas').mouseup(function(){
-			clickX = new Array();
-			clickY = new Array();
-			clickDrag = new Array();
-			paint = false;
-		});
-
-		$('#canvas').mouseleave(function(){
-			paint = false;
-		});
-
 		interact('.file-container')
 	  .draggable({
 	  	allowFrom: '.file-header',
@@ -261,7 +209,8 @@ $(document).ready(function(){
 	  });
 });
 
-
+var canvasID = 1;
+var files = new Map;
 var folders = new Map;
 
 class FullItem {
@@ -671,27 +620,126 @@ function fileDragging(downE){
   	zIndex++;
   }
 
-
-  var clickX = new Array();
-	var clickY = new Array();
-	var clickDrag = new Array();
-
-  function addClick(x, y, dragging) {
-		clickX.push(x);
-		clickY.push(y);
-		clickDrag.push(dragging);
+  function addClick(x, y, xArr, yArr, dragArr, dragging) {
+		xArr.push(x);
+		yArr.push(y);
+		dragArr.push(dragging);
 	}
 
-	function redraw() {
-		for (var i=0; i < clickX.length; i++) {
-			context.beginPath();
-			if( clickDrag[i] && i ) {
-				context.moveTo(clickX[i-1], clickY[i-1]);
-			} else {
-				context.moveTo(clickX[i]-1, clickY[i])
+	function redraw(xArr, yArr, dragArr, contextA) {
+		for (var i=0; i < xArr.length; i++) {
+			contextA.beginPath();
+			if( dragArr[i] && i ) { // jeśli pierwszy punkt albo tylko klikniecie
+				contextA.moveTo(xArr[i-1], yArr[i-1]);
+			} else { // jeśli draggin
+				contextA.moveTo(xArr[i] - 1, yArr[i]);
 			}
-			context.lineTo(clickX[i], clickY[i]);
-			context.closePath();
-			context.stroke();
+			contextA.lineTo(xArr[i], yArr[i]);
+			contextA.closePath();
+			contextA.stroke();
 		}
 	}
+
+	function canvasInteraction (canvasID) {
+		var context = document.getElementById(canvasID).getContext('2d');
+
+		context.strokeStyle = "#333676";
+		context.lineJoin = "round";
+		context.lineWidth = 5;
+
+		var clickX = new Array();
+		var clickY = new Array();
+		var clickDrag = new Array();
+
+		var paint = false;
+
+		$('#' + canvasID).mousedown(function(event){
+			console.log(context);
+			event.preventDefault();
+			// console.log(  $($(this)[0].offsetParent)[0].dataset );
+			var translateX = 0;
+			var translateY = 0;
+			var dataSet = $($(this)[0].offsetParent)[0].dataset;
+			if( dataSet.x ){
+				translateX = parseInt(dataSet.x);
+				translateY = parseInt(dataSet.y);
+				// console.log(translateX, translateY);
+			}
+			var mouseX = event.pageX - ($(this)[0].offsetParent.offsetLeft + translateX);
+			var mouseY = event.pageY - ($(this)[0].offsetParent.offsetTop + this.offsetTop + translateY);
+
+			paint = true;
+			addClick(mouseX, mouseY, clickX, clickY, clickDrag, null);
+			redraw(clickX, clickY, clickDrag, context);
+		});
+
+		$('#' + canvasID).mousemove(function(event){
+			var translateX = 0;
+			var translateY = 0;
+			var dataSet = $($(this)[0].offsetParent)[0].dataset;
+			if( dataSet.x ){
+				translateX = parseInt(dataSet.x);
+				translateY = parseInt(dataSet.y);
+				// console.log(translateX, translateY);
+			}
+			var mouseX = event.pageX - ($(this)[0].offsetParent.offsetLeft + translateX);
+			var mouseY = event.pageY - ($(this)[0].offsetParent.offsetTop + this.offsetTop + translateY);
+
+			if (paint) {
+				addClick(mouseX, mouseY, clickX, clickY, clickDrag, true);
+				redraw(clickX, clickY, clickDrag, context);
+			}
+		});
+
+		$('#' + canvasID).mouseup(function(){
+			clickX = new Array();
+			clickY = new Array();
+			clickDrag = new Array();
+			paint = false;
+		});
+
+		$('#' + canvasID).mouseleave(function(){
+			paint = false;
+			clickX = new Array();
+			clickY = new Array();
+			clickDrag = new Array();
+		});
+}
+
+function showOrCreate (thisA, eventA, type, map) {
+	var parNode = $($($(thisA)[0])[0].parentElement)[0].nextSibling.children[0];
+	$(parNode).css('background-color', 'inherit').css('color', '#080922');
+	if(eventA.originalEvent.path[2].id) {
+		var id = eventA.originalEvent.path[2].id;
+	} else {
+		return null;
+	}
+	if(map.get(id)){   // map = folders
+		applyNewZIndex( map.get(id) );
+		map.get(id).css('display', 'initial');
+	} else {
+		var name = FullItem.allInstances.get(id).name;
+		if(type === 'folder') {
+			var newContainer = createFolderHTML(id, name);
+		} else if (type === 'file') {
+			var newContainer = createFileHTML(id, name);
+		}
+		$('div.container').append(newContainer);
+		newContainer = $('.'+type+'-container#'+id+type);
+		map.set(id, newContainer);
+		if(type === 'folder') {
+			fillingGrid('.folder-container#'+id+'folder .folder-grid');
+		} else if (type === 'file') {
+			canvasInteraction('canvas' + canvasID);
+			canvasID+=1;
+		}
+	}
+}
+
+function createFolderHTML (id, name) {
+	return '<div class="folder-container" id="'+ id + 'folder' +'"><div class="folder-header"><p>'+ name +'</p><i class="fas fa-times-circle exit-folder"></i></div><div class="folder-grid"></div></div>';
+}
+
+function createFileHTML (id, name) {
+	return '<div class="file-container" id="'+ id + 'file' +'"><div class="file-header">'+ name +'<i class="fas fa-times-circle exit-file"></i></div><div class="color-button CB1 CBACTIVE" data-color="#333676" data-canvasID="'+ canvasID +'"></div><div class="color-button CB2" data-color="#c56e00" data-canvasID="'+ canvasID +'"></div><div class="color-button CB3" data-color="#979f00" data-canvasID="'+ canvasID +'"></div><canvas width="326" height="308" id="'+ 'canvas' + canvasID +'"></canvas></div>';
+}
