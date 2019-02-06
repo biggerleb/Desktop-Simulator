@@ -7,7 +7,7 @@ A web app that visually imitate desktop functionality
 * Right click on file or folder to open its context-menu
 * Double click on file to open its drawing-app-like content
 * Double click on folder to open its content
-* Folder's and file's content is draggable (folder's is also resizable)
+* Folders' and files' content is draggable (folders' is also resizable)
 * Play around and see if everything works as it should
 ### Built with:
 * JQuery mixed with Vanilla Javascript DOM manipulation for DOM manipulation
