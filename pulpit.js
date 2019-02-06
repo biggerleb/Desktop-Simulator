@@ -132,33 +132,20 @@ $(document).ready(function(){
 		folder.css('display', 'none');
 	})
 
+	$('div.container').on('click', '.file-header i', function(event){
+		var fileCont = $( event.originalEvent.path[2] );
+		fileCont.css('display', 'none');
+	});
+
 	$('div.container').on('dblclick', 'i.fas.fa-folder', function(event){
-		var parNode = $($($(this)[0])[0].parentElement)[0].nextSibling.children[0];
-		// console.log(parNode);
-		$(parNode).css('background-color', 'inherit').css('color', '#080922');
-		if(event.originalEvent.path[2].id) {
-			var id = event.originalEvent.path[2].id;
-		} else {
-			return null;
-		}
-		if(folders.get(id)){
-			applyNewZIndex( folders.get(id) );
-			folders.get(id).css('display', 'initial');
-		} else {
-			var folderName = FullItem.allInstances.get(id).name;
-			var newFolder = '<div class="folder-container" id="'+ id + 'folder' +'"><div class="folder-header"><p>'+ folderName +'</p><i class="fas fa-times-circle exit-folder"></i></div><div class="folder-grid"></div></div>'
-			$('div.container').append(newFolder);
-			newFolder = $('.folder-container#'+id+'folder');
-			folders.set(id, newFolder);
-			fillingGrid('.folder-container#'+id+'folder .folder-grid');
-		}
+		showOrCreate(this, event, 'folder', folders);
 	});
 
 	$('div.container').on('dblclick', 'i.fas.fa-file', function(event){
 		showOrCreate(this, event, 'file', files);
 	});
 
-	$('div.container').on('mousedown.zINDEX', '.folder-container', function(event){
+	$('div.container').on('mousedown.zINDEX', '.folder-container, .file-container', function(event){
 		applyNewZIndex($(this));
 	});
 
@@ -166,6 +153,10 @@ $(document).ready(function(){
 		var parentEl = this.parentElement;
 		$(parentEl.children).removeClass('CBACTIVE');
 		this.classList.add('CBACTIVE');
+		var dataColor = this.getAttribute('data-color');
+		var dataCanvasID = this.getAttribute('data-canvasID');
+		dataCanvasID = 'canvas' + dataCanvasID;
+		document.getElementById(dataCanvasID).getContext('2d').strokeStyle = dataColor;
 	});
 
 	interact('.folder-container')
@@ -225,6 +216,10 @@ class FullItem {
 		var item = $(".item#" + this.identification);
 		var pictureInsert = '<i class="fas fa-'+ this.type +' icon-'+ this.color +'"></i>';
 		var textInsert = '<p class="Ftext">'+ this.name +'</p>';
+		if(!item[0]) {
+			cursorToNotAllowed();
+			return null;
+		}
 		item[0].children[0].innerHTML = pictureInsert;
 		item[0].children[1].innerHTML = textInsert;
 		item.removeClass("empty");
@@ -433,6 +428,13 @@ function fileDragging(downE){
 				folderHasItsContainer = folders.has(starterID);
 			}
 
+			// tracking changes in files organisation
+			var isItFile = $(icon).hasClass('fa-file');
+			var fileHasItsContainer = false;
+			if(isItFile) {
+				fileHasItsContainer = files.has(starterID);
+			}
+
 			// tracking changes in highlightment
 			if(highlightData.is && highlightData.id !== starterID){
 				unHighlightElement(highlightData.id);
@@ -472,7 +474,7 @@ function fileDragging(downE){
 					var newID = firstFreeID("#"+enderID+"folder .folder-grid");
 					console.log(newID);
 					if(newID){
-						itemNewPlace(starterID, newID, folderHasItsContainer);
+						itemNewPlace(starterID, newID, folderHasItsContainer, fileHasItsContainer);
 						return null;
 					} else {
 						cursorToNotAllowed();
@@ -483,7 +485,7 @@ function fileDragging(downE){
 					cursorToNotAllowed();
 					return null;
 				}
-				itemNewPlace(starterID, enderID, folderHasItsContainer);
+				itemNewPlace(starterID, enderID, folderHasItsContainer, fileHasItsContainer);
 				highlightElement(enderID);
 			});
 		}
@@ -513,6 +515,11 @@ function fileDragging(downE){
 				var folderToDelete = folders.get(id);
 				$(folderToDelete).remove();
 				folders.delete(id);
+			} else {
+				console.log('file deletion');
+				var fileContToDelete = files.get(id);
+				$(fileContToDelete).remove();
+				files.delete(id);
 			}
 			mapItem.itemDeletion();
 			FullItem.allInstances.delete(id);
@@ -545,6 +552,8 @@ function fileDragging(downE){
 				if (folders.has(id)) {
 					// console.log(id);
 					$(folders.get(id)[0].children[0])[0].children[0].textContent = newName;
+				} else if (files.has(id)) {
+					$(files.get(id)[0].children[0])[0].children[0].textContent = newName;
 				}
 
 				$(this).off('click');
@@ -598,7 +607,7 @@ function fileDragging(downE){
   	highlightData.id = null;
   }
 
-  function itemNewPlace(starterID, enderID, folderHasItsContainer) {
+  function itemNewPlace(starterID, enderID, folderHasItsContainer, fileHasItsContainer) {
 				var mapItem = FullItem.allInstances.get(starterID);
 				mapItem.itemDeletion();
 				mapItem.identification = enderID;
@@ -610,6 +619,11 @@ function fileDragging(downE){
 					folders.delete(starterID);
 					folder.attr('id', enderID + 'folder');
 					folders.set(enderID, folder);
+				} else if (fileHasItsContainer) {
+					var fileCont = files.get(starterID);
+					files.delete(starterID);
+					fileCont.attr('id', enderID + 'file');
+					files.set(enderID, fileCont);
 				}
   }
 
@@ -654,7 +668,6 @@ function fileDragging(downE){
 		var paint = false;
 
 		$('#' + canvasID).mousedown(function(event){
-			console.log(context);
 			event.preventDefault();
 			// console.log(  $($(this)[0].offsetParent)[0].dataset );
 			var translateX = 0;
@@ -741,5 +754,5 @@ function createFolderHTML (id, name) {
 }
 
 function createFileHTML (id, name) {
-	return '<div class="file-container" id="'+ id + 'file' +'"><div class="file-header">'+ name +'<i class="fas fa-times-circle exit-file"></i></div><div class="color-button CB1 CBACTIVE" data-color="#333676" data-canvasID="'+ canvasID +'"></div><div class="color-button CB2" data-color="#c56e00" data-canvasID="'+ canvasID +'"></div><div class="color-button CB3" data-color="#979f00" data-canvasID="'+ canvasID +'"></div><canvas width="326" height="308" id="'+ 'canvas' + canvasID +'"></canvas></div>';
+	return '<div class="file-container" id="'+ id + 'file' +'"><div class="file-header"><p>'+ name +'</p><i class="fas fa-times-circle exit-file"></i></div><div class="color-button CB1 CBACTIVE" data-color="#333676" data-canvasID="'+ canvasID +'"></div><div class="color-button CB2" data-color="#c56e00" data-canvasID="'+ canvasID +'"></div><div class="color-button CB3" data-color="#979f00" data-canvasID="'+ canvasID +'"></div><canvas width="326" height="308" id="'+ 'canvas' + canvasID +'"></canvas></div>';
 }
