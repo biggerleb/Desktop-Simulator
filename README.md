@@ -4,7 +4,7 @@ A web app that visually imitate desktop functionality
 * Create files and folders via menu in top-right window corner
 * Create files and folders by right-clicking somewhere in the free desktop space
 * Drag files and folders all around the place
-* Right click on file or folder to open context-menu with 2 options available - Delete and Change name
+* Right click on file or folder to open its context-menu
 * Double click on file to open its drawing-app-like content
 * Double click on folder to open its content
 * Folder's and file's content is draggable (folder's is also resizable)
