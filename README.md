@@ -8,7 +8,7 @@ A web app that visually imitate desktop functionality
 * Double click on file to open its drawing-app-like content
 * Double click on folder to open its content
 * Folders' and files' content is draggable (folders' is also resizable)
-* Play around and see if everything works as it should
+* Play around discover other functionality and see if everything works as it should
 ### Built with:
 * JQuery mixed with Vanilla Javascript DOM manipulation for DOM manipulation
 * Interaction.js for making files' and folders' content draggable and resizable (last one refers to folders only)
