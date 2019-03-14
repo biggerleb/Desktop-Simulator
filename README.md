@@ -1,5 +1,5 @@
 # Desktop Simulator
-A web app that visually imitate desktop functionality
+Web app that visually imitate desktop functionality
 ### What can you do:
 * Create files and folders via menu in top-right window corner
 * Create files and folders by right-clicking somewhere in the free desktop space
