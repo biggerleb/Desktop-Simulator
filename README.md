@@ -14,3 +14,5 @@ Web app that visually imitate desktop functionality
 * Interact.js for making files' and folders' content draggable and resizable (last one refers to folders only)
 
 Yes I know the code is messy, would write it much cleaner now, though
+
+Compatible with Mozilla and Chrome (don't know about others)
