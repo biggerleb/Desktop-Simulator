@@ -64,10 +64,11 @@ $(document).ready(function(){
 
 		$('.context-add-menu').css("top", yCoord + "px").css("left", xCoord + "px");
 		var id;
-		if (event.originalEvent.path[0].id) {
-			id = event.originalEvent.path[0].id;
-		} else if (event.originalEvent.path[1].id) {
-			id = event.originalEvent.path[1].id;
+		var pathArr = event.originalEvent.path || event.originalEvent.composedPath();
+		if (pathArr.id) {
+			id = pathArr.id;
+		} else if (pathArr.id) {
+			id = pathArr.id;
 		}
 		$('.context-add-file').off('click');
 		$('.context-add-folder').off('click');
@@ -98,10 +99,11 @@ $(document).ready(function(){
 
 	$('div.container').on('click contextmenu', 'div.full div.picture, div.full p.Ftext', function(event){
 		var id = null;
-		if (event.originalEvent.path[1].id){
-			id = event.originalEvent.path[1].id;
-		} else if (event.originalEvent.path[2].id) {
-			id = event.originalEvent.path[2].id;
+		var pathArr = event.originalEvent.path || event.originalEvent.composedPath();
+		if (pathArr[1].id){
+			id = pathArr[1].id;
+		} else if (pathArr[2].id) {
+			id = pathArr[2].id;
 		}
 		if(highlightData.is){
 			unHighlightElement(highlightData.id);
@@ -113,7 +115,7 @@ $(document).ready(function(){
 		if(!event.originalEvent){
 			return null;
 		}
-		var pathArr = event.originalEvent.path;
+		var pathArr = event.originalEvent.path || event.originalEvent.composedPath();
 		var classes = pathArr[0].classList;
 		if ( classes.contains('picture') && pathArr[1].classList.contains("full") ) {
 			return null;
@@ -128,12 +130,14 @@ $(document).ready(function(){
 	});
 
 	$('div.container').on('click','.folder-header i' ,function(event){
-		var folder = $( event.originalEvent.path[2] );
+		var pathArr = event.originalEvent.path || event.originalEvent.composedPath();
+		var folder = $( pathArr[2] );
 		folder.css('display', 'none');
 	})
 
 	$('div.container').on('click', '.file-header i', function(event){
-		var fileCont = $( event.originalEvent.path[2] );
+		var pathArr = event.originalEvent.path || event.originalEvent.composedPath();
+		var fileCont = $( pathArr[2] );
 		fileCont.css('display', 'none');
 	});
 
@@ -266,7 +270,6 @@ function updatingGrid(containerSelector){
 
 var itemID = 1;
 function fillingGrid(containerSelector){
-	// console.log(itemID);
 	var container = $(containerSelector)[0];
 	var windowHeight = container.clientHeight;
 	var windowWidth = container.clientWidth;
@@ -412,7 +415,7 @@ function fileDragging(downE){
 			downE.preventDefault();
 			$(".context-menu").css("top", "-100px").css("left", "0");
 			$("body").css("cursor", "grab");
-			var pathD = downE.originalEvent.path;
+			var pathD = downE.originalEvent.path || downE.originalEvent.composedPath();
 			var starterID;
 			if(pathD[1].id) {
 				starterID = pathD[1].id;
@@ -443,7 +446,7 @@ function fileDragging(downE){
 			$("body").on("mouseup", function(upE){
 				$("body").off("mouseup");
 				$("body").css("cursor", "");
-				var pathU = upE.originalEvent.path;
+				var pathU = upE.originalEvent.path || upE.originalEvent.composedPath();
 				var enderID;
 				if(pathU[0].id) {
 					enderID = pathU[0].id;
@@ -453,7 +456,6 @@ function fileDragging(downE){
 					enderID = pathU[2].id;
 				}
 
-				// console.log( $( $('.item#'+enderID)[0].parentElement )[0].parentElement.id );
 				var folderID;
 				try {
 					folderID = $( $('.item#'+enderID)[0].parentElement )[0].parentElement.id;
@@ -470,9 +472,7 @@ function fileDragging(downE){
 					return null;
 				}
 				if (folders.has(enderID)) {
-					console.log('hey');
 					var newID = firstFreeID("#"+enderID+"folder .folder-grid");
-					console.log(newID);
 					if(newID){
 						itemNewPlace(starterID, newID, folderHasItsContainer, fileHasItsContainer);
 						return null;
@@ -493,10 +493,11 @@ function fileDragging(downE){
 
 	function contextMenuHandler(event) {
 		var id = null;
-		if (event.originalEvent.path[1].id){
-			id = event.originalEvent.path[1].id;
-		} else if (event.originalEvent.path[2].id) {
-			id = event.originalEvent.path[2].id;
+		var pathArr = event.originalEvent.path || event.originalEvent.composedPath();
+		if (pathArr[1].id){
+			id = pathArr[1].id;
+		} else if (pathArr[2].id) {
+			id = pathArr[2].id;
 		}
 		$(".context-delete").off('click');
 		$(".context-name").off('click');
@@ -511,12 +512,10 @@ function fileDragging(downE){
 		$(".context-delete").on('click', function(){
 			var mapItem = FullItem.allInstances.get(id);
 			if(mapItem.type === 'folder') {
-				console.log('folder deletion');
 				var folderToDelete = folders.get(id);
 				$(folderToDelete).remove();
 				folders.delete(id);
 			} else {
-				console.log('file deletion');
 				var fileContToDelete = files.get(id);
 				$(fileContToDelete).remove();
 				files.delete(id);
@@ -550,7 +549,6 @@ function fileDragging(downE){
 				$('.new-name-input').css('top', '-50px').css('left', "0");
 
 				if (folders.has(id)) {
-					// console.log(id);
 					$(folders.get(id)[0].children[0])[0].children[0].textContent = newName;
 				} else if (files.has(id)) {
 					$(files.get(id)[0].children[0])[0].children[0].textContent = newName;
@@ -669,14 +667,12 @@ function fileDragging(downE){
 
 		$('#' + canvasID).mousedown(function(event){
 			event.preventDefault();
-			// console.log(  $($(this)[0].offsetParent)[0].dataset );
 			var translateX = 0;
 			var translateY = 0;
 			var dataSet = $($(this)[0].offsetParent)[0].dataset;
 			if( dataSet.x ){
 				translateX = parseInt(dataSet.x);
 				translateY = parseInt(dataSet.y);
-				// console.log(translateX, translateY);
 			}
 			var mouseX = event.pageX - ($(this)[0].offsetParent.offsetLeft + translateX);
 			var mouseY = event.pageY - ($(this)[0].offsetParent.offsetTop + this.offsetTop + translateY);
@@ -693,7 +689,6 @@ function fileDragging(downE){
 			if( dataSet.x ){
 				translateX = parseInt(dataSet.x);
 				translateY = parseInt(dataSet.y);
-				// console.log(translateX, translateY);
 			}
 			var mouseX = event.pageX - ($(this)[0].offsetParent.offsetLeft + translateX);
 			var mouseY = event.pageY - ($(this)[0].offsetParent.offsetTop + this.offsetTop + translateY);
@@ -722,8 +717,9 @@ function fileDragging(downE){
 function showOrCreate (thisA, eventA, type, map) {
 	var parNode = $($($(thisA)[0])[0].parentElement)[0].nextSibling.children[0];
 	$(parNode).css('background-color', 'inherit').css('color', '#080922');
-	if(eventA.originalEvent.path[2].id) {
-		var id = eventA.originalEvent.path[2].id;
+	var pathArr = eventA.originalEvent.path || eventA.originalEvent.composedPath();
+	if(pathArr[2].id) {
+		var id = pathArr[2].id;
 	} else {
 		return null;
 	}
