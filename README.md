@@ -13,4 +13,4 @@ Web app that visually imitate desktop functionality
 * JQuery mixed with Vanilla Javascript DOM manipulation for DOM manipulation
 * Interaction.js for making files' and folders' content draggable and resizable (last one refers to folders only)
 
-Yee I know the code is messy
+Yes I know the code is messy, would write it much cleaner now, though
